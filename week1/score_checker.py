@@ -14,15 +14,18 @@ import sys
 # | 3 points | b, f, g, p, v, w, y       |
 # | 4 points | j, k, q, x, z             |
 # ----------------------------------------
-SCORES = [1, 3, 2, 2, 1, 3, 3, 1, 1, 4, 4, 2, 2, 1, 1, 3, 4, 1, 1, 1, 2, 3, 3, 4, 3, 4]
+SCORES = [1, 3, 2, 2, 1, 3, 3, 1, 1, 4, 4, 2,
+          2, 1, 1, 3, 4, 1, 1, 1, 2, 3, 3, 4, 3, 4]
 
 WORDS_FILE = "words.txt"
+
 
 def calculate_score(word):
     score = 0
     for character in list(word):
         score += SCORES[ord(character) - ord('a')]
     return score
+
 
 def read_words(word_file):
     words = []
@@ -31,6 +34,7 @@ def read_words(word_file):
             line = line.rstrip('\n')
             words.append(line)
     return words
+
 
 def is_anagram(anagram, data):
     data_table = [0] * 26
@@ -41,6 +45,7 @@ def is_anagram(anagram, data):
             return False
         data_table[ord(character) - ord('a')] -= 1
     return True
+
 
 def main(data_file, answer_file):
     valid_words = read_words(WORDS_FILE)
@@ -61,6 +66,7 @@ def main(data_file, answer_file):
             exit(1)
         score += calculate_score(answer_words[i])
     print('You answer is correct! Your score is %d.' % score)
+
 
 if __name__ == "__main__":
     if len(sys.argv) != 3:

@@ -10,7 +10,8 @@ from collections import Counter
 # ----------------------------------------
 SCORES = [1, 3, 2, 2, 1, 3, 3, 1, 1, 4, 4, 2,
           2, 1, 1, 3, 4, 1, 1, 1, 2, 3, 3, 4, 3, 4]
-INPUTS = ['./input/small.txt', './input/meduim.txt', './input/large.txt']
+INPUTS = ['./input/small.txt', './input/medium.txt', './input/large.txt']
+OUTPUTS = ['./output/small.txt', './output/meduim.txt', './output/large.txt']
 
 
 class AnagramSubstr:
@@ -28,8 +29,19 @@ class AnagramSubstr:
         self.dictionary = self.group_dictionary(self.sort_dictionary())
         self.accounted_dictionary = self.account_dictionary(self.dictionary)
 
-    def find_highest_score(self, results: list[str]) -> str:
-        pass
+    def find_highest_score(self, words: list[str]) -> str:
+        highest_score = -1
+        word_with_highest_score = ''
+
+        for word in words:
+            current_score = 0
+            for char in word:
+                current_score += ord(char)-ord('a')
+            if current_score >= highest_score:
+                highest_score = current_score
+                word_with_highest_score = word
+        return word_with_highest_score
+
 # -------------------------find_anagram_with_combination-------------------------
 
     def find_anagram_with_combination(self, str: str) -> list[str]:
@@ -71,14 +83,28 @@ class AnagramSubstr:
 
 # -------------------------find_anagram_with_account_char-------------------------
 
-    def find_anagram_with_account_char(self, str: str):
+    def find_anagram_with_account_char(self, str: str) -> list[str]:
         '''method 2: count input and dictionary, search subset(get all anagrams)'''
-        accounted_str = {x: list(str).count(x) for x in sorted(set(str))}
-        print(accounted_str)
+        accounted_str = dict(Counter(sorted(str)))
+        result = self.search_subset(accounted_str)
+        return result
 
+    def search_subset(self, accounted_str: dict[str, int]) -> list[str]:
+        result = []
+        for word, word_list in self.accounted_dictionary:
+            if self.check_is_substr(word, accounted_str):
+                result.extend(word_list)
+        return result
 
-# -------------------------process dictionary-------------------------
+    def check_is_substr(self, word: dict[str, int], accounted_str: dict[str, int]) -> bool:
+        for key, value in word.items():
+            if key not in accounted_str or accounted_str[key] < value:
+                return False
+        return True
 
+# -------------------------Finish of find_anagram_with_account_char-------------------------
+
+# -------------------------prepare dictionary-------------------------
 
     def sort_dictionary(self) -> list[tuple[str, str]]:
         '''
@@ -104,27 +130,32 @@ class AnagramSubstr:
         return grouped_dictionary
 
     def account_dictionary(self, dictionary: list[tuple[str, list[str]]]) -> list[tuple[dict[str, int], list[str]]]:
-        accounted_dictionary = [({x: list(tuple[0]).count(x)
-                                  for x in sorted(set(tuple[0]))}, tuple[1]) for tuple in dictionary]
-        print(accounted_dictionary)
+        accounted_dictionary = [(dict(Counter(word)), word_list)
+                                for word, word_list in dictionary]
         return accounted_dictionary
 
-    def search_sorted_dictionary(str: str):
-        pass
+# -------------------------Finish of prepare dictionary-------------------------
+# -------------------------driver code for read / write file-------------------------
 
-    def search_account_dictionary(str: str):
-        pass
+    def input_from_file(self, path: str) -> list[str]:
+        result = []
+        with open(path) as file:
+            input = file.read().splitlines()
+            for word in input:
+                anagrams = self.find_anagram_with_account_char(word)
+                anagram_with_highest_score = self.find_highest_score(anagrams)
+                result.append(anagram_with_highest_score)
+        print(result)
+        return result
+
+    def output_to_file(self, words: list, path: str) -> None:
+        with open(path, 'w') as file:
+            for word in words:
+                file.writelines(f'{word}\n')
 
 
 anagram = AnagramSubstr()
 # anagram.find_anagram_with_combination('')
-anagram.find_anagram_with_account_char('ofpsiaeiie')
-
-# with open('./input/test.txt') as file:
-#     inputs = file.read().splitlines()
-#     print(inputs)
-#     for str in inputs:
-#         result.append(anagram.findAnagram(str))
-
-# print(result)
-# TODO: write into ./output/small.txt, m, l
+for i in range(len(INPUTS)):
+    res = anagram.input_from_file(INPUTS[i])
+    anagram.output_to_file(res, OUTPUTS[i])
