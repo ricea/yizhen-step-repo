@@ -1,7 +1,7 @@
 from itertools import groupby, permutations
 import math
 from collections import Counter
-
+# https: // github.com/ricea/yizhen-step-repo/tree/office-hours-1/week1
 # ----------------------------------------
 # | 1 point  | a, e, h, i, n, o, r, s, t |
 # | 2 points | c, d, l, m, u             |
