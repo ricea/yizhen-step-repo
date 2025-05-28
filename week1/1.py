@@ -23,18 +23,16 @@ class Anagram:
     def binary_search(self, str: str) -> list[str]:
         left = 0
         right = len(self.dictionary)
-        mid = math.floor((0+right)/2
-                         )
-        while (left <= right):
+        while left <= right:
+            mid = math.floor((left+right)/2)
             mid_word = self.dictionary[mid][0]
-            if (mid_word == str):
+            if mid_word == str:
                 return self.dictionary[mid][1]
-            if (mid_word < str):
+            if mid_word < str:
                 left = mid+1
-                mid = math.floor((left+right)/2)
             else:
                 right = mid-1
-                mid = math.floor((left+right)/2)
+                
         return []
 
     def sort_dictionary(self) -> list[tuple[str, str]]:

@@ -11,14 +11,13 @@ from collections import Counter
 SCORES = [1, 3, 2, 2, 1, 3, 3, 1, 1, 4, 4, 2,
           2, 1, 1, 3, 4, 1, 1, 1, 2, 3, 3, 4, 3, 4]
 INPUTS = ['./input/small.txt', './input/medium.txt', './input/large.txt']
-OUTPUTS = ['./output/small.txt', './output/meduim.txt', './output/large.txt']
+OUTPUTS = ['./output/small.txt', './output/medium.txt', './output/large.txt']
 
 
 class AnagramSubstr:
     '''
         input: a random str
         search word from dictionary
-        can set substr length
         map chars into calculate table
 
         method 1: choose permutation substrs from input, search all permutations
@@ -85,22 +84,17 @@ class AnagramSubstr:
 
     def find_anagram_with_account_char(self, str: str) -> list[str]:
         '''method 2: count input and dictionary, search subset(get all anagrams)'''
-        accounted_str = dict(Counter(sorted(str)))
+        accounted_str = Counter(sorted(str))
         result = self.search_subset(accounted_str)
         return result
 
     def search_subset(self, accounted_str: dict[str, int]) -> list[str]:
         result = []
         for word, word_list in self.accounted_dictionary:
-            if self.check_is_substr(word, accounted_str):
+            if word <= accounted_str:
                 result.extend(word_list)
         return result
 
-    def check_is_substr(self, word: dict[str, int], accounted_str: dict[str, int]) -> bool:
-        for key, value in word.items():
-            if key not in accounted_str or accounted_str[key] < value:
-                return False
-        return True
 
 # -------------------------Finish of find_anagram_with_account_char-------------------------
 
@@ -130,7 +124,7 @@ class AnagramSubstr:
         return grouped_dictionary
 
     def account_dictionary(self, dictionary: list[tuple[str, list[str]]]) -> list[tuple[dict[str, int], list[str]]]:
-        accounted_dictionary = [(dict(Counter(word)), word_list)
+        accounted_dictionary = [(Counter(word), word_list)
                                 for word, word_list in dictionary]
         return accounted_dictionary
 
