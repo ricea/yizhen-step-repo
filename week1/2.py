@@ -2,6 +2,7 @@ from itertools import groupby, permutations
 import math
 from collections import Counter
 # https: // github.com/ricea/yizhen-step-repo/tree/office-hours-1/week1
+# https: // docs.google.com/document/d/19ZGJwsQ0qxx2hiqqKxR4trSIznq07OT1Xc-0yBdu0LQ/edit?tab = t.0
 # ----------------------------------------
 # | 1 point  | a, e, h, i, n, o, r, s, t |
 # | 2 points | c, d, l, m, u             |
@@ -11,7 +12,7 @@ from collections import Counter
 SCORES = [1, 3, 2, 2, 1, 3, 3, 1, 1, 4, 4, 2,
           2, 1, 1, 3, 4, 1, 1, 1, 2, 3, 3, 4, 3, 4]
 INPUTS = ['./input/small.txt', './input/medium.txt', './input/large.txt']
-OUTPUTS = ['./output/small.txt', './output/meduim.txt', './output/large.txt']
+OUTPUTS = ['./output/small.txt', './output/medium.txt', './output/large.txt']
 
 
 class AnagramSubstr:
