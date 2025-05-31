@@ -4,7 +4,7 @@ class Solution:
         input: 
         GGWW
         GWWGGWGWG
-        find min number of change (G->W or W->G)to make to convert the string into all G are in left side and all W are in right side
+        find min number of changes (G->W or W->G)to make to convert the string into all G are in left side and all W are in right side
         better solution:
         use a spliting line and sliding through the string (O(N))
         the line represent:
