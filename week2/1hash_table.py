@@ -17,15 +17,21 @@ import time
 # Return value: a hash value
 
 
-def calculate_hash(key):
+def calculate_hash(key: str, mod: int) -> int:
     '''
-    TODO: change to rolling hash 
+    TODO: why rolling hash? 
+    modulo m should be a large prime number 
+    p: a const prime number used to generate exponent
+    pow: p**i
     '''
     assert type(key) == str
-    # Note: This is not a good hash function. Do you see why?
+
+    p = 31
     hash = 0
+    pow = 1
     for i in key:
-        hash += ord(i)
+        hash = (hash + (ord(i)-ord('a')) * pow) % mod
+        pow = pow*p % mod
     return hash
 
 
@@ -56,6 +62,7 @@ class HashTable:
         # Set the initial bucket size to 97. A prime number is chosen to reduce
         # hash conflicts.
         self.bucket_size = 97
+        # TODO: rehash / shrink hash table, use prime number
         self.buckets = [None] * self.bucket_size
         self.item_count = 0
 
@@ -69,7 +76,7 @@ class HashTable:
     def put(self, key, value):
         assert type(key) == str
         self.check_size()  # Note: Don't remove this code.
-        bucket_index = calculate_hash(key) % self.bucket_size
+        bucket_index = calculate_hash(key, self.bucket_size)
         item = self.buckets[bucket_index]
         while item:
             if item.key == key:
@@ -90,7 +97,7 @@ class HashTable:
     def get(self, key):
         assert type(key) == str
         self.check_size()  # Note: Don't remove this code.
-        bucket_index = calculate_hash(key) % self.bucket_size
+        bucket_index = calculate_hash(key, self.bucket_size)
         item = self.buckets[bucket_index]
         while item:
             if item.key == key:
@@ -105,7 +112,7 @@ class HashTable:
     #               otherwise.
     def delete(self, key):
         assert type(key) == str
-        bucket_index = calculate_hash(key) % self.bucket_size
+        bucket_index = calculate_hash(key, self.bucket_size)
         item = self.buckets[bucket_index]
 
         if item is not None:
