@@ -17,7 +17,7 @@ class Item:
     An item object that represents one key - value pair in the hash table.
     |key|: The key of the item. The key must be a string.
     |value|: The value of the item.
-    |next|: The next item in the linked list. If this is the last item in the linked list, |next| is None.
+    |next|: The next item in the linked list. If this is the tail item in the linked list, |next| is None.
     '''
 
     def __init__(self, key, value, next):

@@ -22,7 +22,6 @@ class Solution:
         # slide the line into right
         while line < length:
             # each step would put current char into left side
-            current_char = s[line]
             if s[line] == 'G':
                 count -= 1
                 ans = min(ans, count)

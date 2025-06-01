@@ -1,32 +1,12 @@
 
 import sys
-from hash_table import HashTable, Item
+from hash_table import HashTable
 
 '''
 Implement a data structure that stores the most recently accessed N pages.
 See the below test cases to see how it should work.
 
 Note: Please do not use a library like collections.OrderedDict). The goal is to implement the data structure yourself!
-
-observe the history, pick pages with higher probability
-pick most recent x pages
-
-requiremets:
-input: (url,page)
-
-implement a hash table with fixed size (X)
-store the key value as <url, webpage> pair
-be able to get time series order
-    specifically, we want to know the key of the oldest one in O(1)
-    intuitively, use something like a queue
-    delete in list in O(1)(or pserform shift in O(1))
-    use 2 pointers to keep watching head and tail in a fixed size queue
-store the elem's idx in the queue in hashtable as well
-
-Bubble the element to top: change node 
-size limit: n
-add: if items > n: remove and add
-else: add
 '''
 
 
@@ -41,65 +21,65 @@ class Node:
 class DoublyLinkedList:
     def __init__(self, n: int):
         '''
-        first: the newest added node, 
-        first's next is None
-        last: the oldest node, which will be removed if new node comes in 
-        last's prev is None
+        head: the newest added node, most recently accessed
+        head's next is None
+        tail: the oldest node, which will be removed if new node comes in 
+        tail's prev is None
         '''
         self.limit = n
-        self.first = None
-        self.last = None
+        self.head = None
+        self.tail = None
         self.count_item = 0
 
-    def add_to_first(self, url: str, content: any) -> tuple[Node, bool]:
+    def add_to_head(self, url: str, content: any) -> tuple[Node, bool]:
         '''
         create a new node 
-        new node's prev is current first, next is None
-        and add the new node to the first of linked list
-        drop last if hit size limit
+        new node's prev is current head, next is None
+        and add the new node to the head of linked list
+        drop tail if hit size limit
         '''
-        new_node = Node(url, content, self.first, None)
+        new_node = Node(url, content, self.head, None)
         if self.count_item == 0:
-            self.first = new_node
-            self.last = new_node
+            self.head = new_node
+            self.tail = new_node
         else:
-            self.first.next = new_node
-            self.first = new_node
+            self.head.next = new_node
+            self.head = new_node
 
         self.count_item += 1
         return (new_node, True)
 
-    def remove_last(self) -> tuple[any, bool]:
-        '''point the 'self.last' flag to the last second node, then drop the last item  '''
+    def remove_tail(self) -> tuple[any, bool]:
+        '''point the 'self.tail' flag to the tail second node, then drop the tail item  '''
         if self.count_item < 1:
             return (None, False)
-        removed_node = self.last
-        self.last = self.last.next
+        removed_node = self.tail
+        self.tail = self.tail.next
 
-        if self.last is not None:
-            self.last.prev = None
+        if self.tail is not None:
+            self.tail.prev = None
         self.count_item -= 1
         return (removed_node, True)
 
-    def move_to_first(self, exist_node: Node) -> tuple[Node, bool]:
+    def move_to_head(self, exist_node: Node) -> tuple[Node, bool]:
         '''
-        first: check if node is already first
+        head: check if node is already head
         if not: 
-            point current first's next to exist_node, 
-            point exist_node's prev to current first,
-            move self.first to exist_node
+            point current head's next to exist_node, 
+            point exist_node's prev to current head,
+            move self.head to exist_node
         '''
-        if self.first is not exist_node:
+        if self.head is not exist_node:
             if exist_node.prev is not None:
-                # when exist node is not self.last
+                # when exist node is not self.tail
                 exist_node.prev.next = exist_node.next
             else:
-                # when exist node is self.last(the oldest page), we change the self.last pointer
-                self.last = exist_node.next
+                # when exist node is self.tail(the oldest page), we change the self.tail pointer
+                self.tail = exist_node.next
             exist_node.next.prev = exist_node.prev
-            self.first.next = exist_node
-            exist_node.prev = self.first
-            self.first = exist_node
+            self.head.next = exist_node
+            exist_node.prev = self.head
+            self.head = exist_node
         return (exist_node, True)
 
 
@@ -127,15 +107,15 @@ class Cache:
         item, found = self.hashtable.get(url)
 
         if found == True:
-            self.doubly_linked_list.move_to_first(item)
+            self.doubly_linked_list.move_to_head(item)
             # if size limit:
 
         else:
-            new_node, success = self.doubly_linked_list.add_to_first(
+            new_node, success = self.doubly_linked_list.add_to_head(
                 url, contents)
             self.hashtable.put(url, new_node)
             if self.hashtable.size() > self.limit:
-                self.doubly_linked_list.remove_last()
+                self.doubly_linked_list.remove_tail()
 
     def get_pages(self):
         '''    
@@ -143,7 +123,7 @@ class Cache:
         The URLs are ordered in the order in which the URLs are mostly recently accessed.
         '''
         pages = []
-        item = self.doubly_linked_list.first
+        item = self.doubly_linked_list.head
         while item is not None:
             pages.append(item.url)
             item = item.prev
