@@ -1,6 +1,6 @@
 
 import sys
-import 1hash_table
+from hash_table import HashTable, Item
 
 '''
 Implement a data structure that stores the most recently accessed N pages.
@@ -21,7 +21,86 @@ be able to get time series order
     intuitively, use something like a queue
     delete in list in O(1)(or pserform shift in O(1))
     use 2 pointers to keep watching head and tail in a fixed size queue
+store the elem's idx in the queue in hashtable as well
+
+Bubble the element to top: change node 
+size limit: n
+add: if items > n: remove and add
+else: add
 '''
+
+
+class Node:
+    def __init__(self, url: str, content: any, prev: any, next: any):
+        self.url = url
+        self.content = content
+        self.prev = prev
+        self.next = next
+
+
+class DoublyLinkedList:
+    def __init__(self, n: int):
+        '''
+        first: the newest added node, 
+        first's next is None
+        last: the oldest node, which will be removed if new node comes in 
+        last's prev is None
+        '''
+        self.limit = n
+        self.first = None
+        self.last = None
+        self.count_item = 0
+
+    def add_to_first(self, url: str, content: any) -> tuple[Node, bool]:
+        '''
+        create a new node 
+        new node's prev is current first, next is None
+        and add the new node to the first of linked list
+        drop last if hit size limit
+        '''
+        new_node = Node(url, content, self.first, None)
+        if self.count_item == 0:
+            self.first = new_node
+            self.last = new_node
+        else:
+            self.first.next = new_node
+            self.first = new_node
+
+        self.count_item += 1
+        return (new_node, True)
+
+    def remove_last(self) -> tuple[any, bool]:
+        '''point the 'self.last' flag to the last second node, then drop the last item  '''
+        if self.count_item < 1:
+            return (None, False)
+        removed_node = self.last
+        self.last = self.last.next
+
+        if self.last is not None:
+            self.last.prev = None
+        self.count_item -= 1
+        return (removed_node, True)
+
+    def move_to_first(self, exist_node: Node) -> tuple[Node, bool]:
+        '''
+        first: check if node is already first
+        if not: 
+            point current first's next to exist_node, 
+            point exist_node's prev to current first,
+            move self.first to exist_node
+        '''
+        if self.first is not exist_node:
+            if exist_node.prev is not None:
+                # when exist node is not self.last
+                exist_node.prev.next = exist_node.next
+            else:
+                # when exist node is self.last(the oldest page), we change the self.last pointer
+                self.last = exist_node.next
+            exist_node.next.prev = exist_node.prev
+            self.first.next = exist_node
+            exist_node.prev = self.first
+            self.first = exist_node
+        return (exist_node, True)
 
 
 class Cache:
@@ -30,13 +109,9 @@ class Cache:
         Initialize the cache.
         |n|: The size of the cache.
         '''
-        self.queue = [None]*n
-        self.first = 0
-        self.last = 0
-
-        self.hashtable = [None]*n
-
-        pass
+        self.limit = n
+        self.doubly_linked_list = DoublyLinkedList(n)
+        self.hashtable = HashTable()
 
     def access_page(self, url, contents):
         '''
@@ -44,20 +119,35 @@ class Cache:
         accessed N pages. This needs to be done with mostly O(1).
         |url|: The accessed URL
         |contents|: The contents of the URL
-        TODO: access in hash table, search if url exists
+
+        access in hash table, search if url exists
             if url not exists:
             remove the oldest (url,page) in cache, add the input to the most top
         '''
+        item, found = self.hashtable.get(url)
 
-        pass
+        if found == True:
+            self.doubly_linked_list.move_to_first(item)
+            # if size limit:
+
+        else:
+            new_node, success = self.doubly_linked_list.add_to_first(
+                url, contents)
+            self.hashtable.put(url, new_node)
+            if self.hashtable.size() > self.limit:
+                self.doubly_linked_list.remove_last()
 
     def get_pages(self):
         '''    
         Return the URLs stored in the cache. 
         The URLs are ordered in the order in which the URLs are mostly recently accessed.
         '''
-
-        pass
+        pages = []
+        item = self.doubly_linked_list.first
+        while item is not None:
+            pages.append(item.url)
+            item = item.prev
+        return pages
 
 
 def cache_test():

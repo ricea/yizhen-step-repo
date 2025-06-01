@@ -55,9 +55,9 @@ class HashTable:
         TODO: why rolling hash? 
         Hash function.
         |key|: string
-        mod: modulo m should be a large prime number 
         Return value: a hash value
 
+        self.bucket_size: modulo, should be a large prime number 
         p: a const prime number used to generate exponent
         pow: p**i
         '''
@@ -71,7 +71,7 @@ class HashTable:
             pow = pow*p % self.bucket_size
         return hash
 
-    def put(self, key, value, ):
+    def put(self, key: str, value: any) -> bool:
         '''
         Put an item to the hash table. If the key already exists, the corresponding value is updated to a new value.
         |key|: The key of the item.
@@ -82,7 +82,7 @@ class HashTable:
         assert type(key) == str
         self.check_size()
 
-        self.check_rehash()
+        self._check_rehash()
 
         bucket_index = self.calculate_hash(key)
         item = self.buckets[bucket_index]
@@ -96,11 +96,13 @@ class HashTable:
         self.item_count += 1
         return True
 
-    def get(self, key):
+    def get(self, key) -> tuple[any, bool]:
         '''
         Get an item from the hash table.
         |key|: The key.
         Return value: If the item is found, (the value of the item, True) is returned. Otherwise, (None, False) is returned.
+        TODO: Question: 
+        why we return (None, False) instead of None?
         '''
         assert type(key) == str
         self.check_size()
@@ -113,7 +115,7 @@ class HashTable:
             item = item.next
         return (None, False)
 
-    def delete(self, key):
+    def delete(self, key: str) -> bool:
         '''
         Delete an item from the hash table.
         |key|: The key.
@@ -121,7 +123,7 @@ class HashTable:
         '''
         assert type(key) == str
 
-        self.check_rehash()
+        self._check_rehash()
         bucket_index = self.calculate_hash(key)
         item = self.buckets[bucket_index]
         if item is not None:
@@ -142,7 +144,7 @@ class HashTable:
 
         return False
 
-    def check_rehash(self):
+    def _check_rehash(self) -> None:
         '''
         TODO: find bucket size
         size down if total usage is less than 0.3
@@ -151,13 +153,13 @@ class HashTable:
 
         if self.bucket_size_idx > 0 and self.item_count <= self.bucket_size * 0.3:
             self.bucket_size_idx -= 1
-            self.rehash()
+            self._rehash()
 
         elif self.bucket_size_idx < len(self.sizes)-1 and self.item_count >= self.bucket_size * 0.7:
             self.bucket_size_idx += 1
-            self.rehash()
+            self._rehash()
 
-    def rehash(self):
+    def _rehash(self) -> None:
         '''
         assign new bucket size, empty new buckets and initial count number to self
         make a copy of origin bucket
@@ -179,7 +181,7 @@ class HashTable:
                 self.item_count += 1
                 item = item.next
 
-    def size(self):
+    def size(self) -> int:
         '''Return the total number of items in the hash table.'''
         return self.item_count
 
