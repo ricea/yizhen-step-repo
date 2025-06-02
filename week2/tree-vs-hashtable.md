@@ -18,7 +18,7 @@
 - easy to deploy in a distributed way when scale up
 - when hash table grows fast, it may trigger frequently rehash, each rehash takes O(n), and demands great amout of calculating. This may make system unstable
 
-**after research**
+**after searching**
 
 ### concurrency:
 

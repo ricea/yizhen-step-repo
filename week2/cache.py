@@ -27,37 +27,34 @@ class DoublyLinkedList:
         tail's prev is None
         '''
         self.limit = n
-        self.head = None
-        self.tail = None
+        self.head = Node('dummy', None, None, None)
+        self.tail = Node('dummy', None, None, None)
+        self.head.next = self.tail
+        self.tail.prev = self.head
         self.count_item = 0
 
     def add_to_head(self, url: str, content: any) -> tuple[Node, bool]:
         '''
         create a new node 
-        new node's prev is current head, next is None
         and add the new node to the head of linked list
-        drop tail if hit size limit
         '''
-        new_node = Node(url, content, self.head, None)
-        if self.count_item == 0:
-            self.head = new_node
-            self.tail = new_node
-        else:
-            self.head.next = new_node
-            self.head = new_node
-
+        new_node = Node(url, content, self.head, self.head.next)
+        self.head.next.prev = new_node
+        self.head.next = new_node
         self.count_item += 1
         return (new_node, True)
 
     def remove_tail(self) -> tuple[any, bool]:
-        '''point the 'self.tail' flag to the tail second node, then drop the tail item  '''
+        '''
+        point the 'self.tail' flag to the tail second node, then drop the tail item 
+        the node should also be removed from hash map
+        '''
         if self.count_item < 1:
             return (None, False)
-        removed_node = self.tail
-        self.tail = self.tail.next
+        removed_node = self.tail.prev
+        self.tail.prev = self.tail.prev.prev
+        self.tail.prev.next = self.tail
 
-        if self.tail is not None:
-            self.tail.prev = None
         self.count_item -= 1
         return (removed_node, True)
 
@@ -65,21 +62,22 @@ class DoublyLinkedList:
         '''
         head: check if node is already head
         if not: 
-            point current head's next to exist_node, 
-            point exist_node's prev to current head,
-            move self.head to exist_node
+            connect point exist_node's prev and next, 
+            move exist_node to next of self.head 
         '''
-        if self.head is not exist_node:
-            if exist_node.prev is not None:
-                # when exist node is not self.tail
-                exist_node.prev.next = exist_node.next
-            else:
-                # when exist node is self.tail(the oldest page), we change the self.tail pointer
-                self.tail = exist_node.next
-            exist_node.next.prev = exist_node.prev
-            self.head.next = exist_node
-            exist_node.prev = self.head
-            self.head = exist_node
+        if self.count_item < 1:
+            return (None, False)
+        if self.head.next is exist_node:
+            return (exist_node, True)
+
+        exist_node.prev.next = exist_node.next
+        exist_node.next.prev = exist_node.prev
+
+        exist_node.prev = self.head
+        exist_node.next = self.head.next
+        exist_node.next.prev = exist_node
+        self.head.next = exist_node
+
         return (exist_node, True)
 
 
@@ -93,7 +91,7 @@ class Cache:
         self.doubly_linked_list = DoublyLinkedList(n)
         self.hashtable = HashTable()
 
-    def access_page(self, url, contents):
+    def access_page(self, url, contents) -> None:
         '''
         Access a page and update the cache so that it stores the most recently
         accessed N pages. This needs to be done with mostly O(1).
@@ -102,31 +100,35 @@ class Cache:
 
         access in hash table, search if url exists
             if url not exists:
-            remove the oldest (url,page) in cache, add the input to the most top
+            add the input to the most top
+            drop current tail (the oldest (url,page) in cache) if hit size limit
         '''
         item, found = self.hashtable.get(url)
 
         if found == True:
             self.doubly_linked_list.move_to_head(item)
-            # if size limit:
 
         else:
             new_node, success = self.doubly_linked_list.add_to_head(
                 url, contents)
-            self.hashtable.put(url, new_node)
-            if self.hashtable.size() > self.limit:
-                self.doubly_linked_list.remove_tail()
+            if success == True:
+                self.hashtable.put(url, new_node)
+                if self.hashtable.size() > self.limit:
+                    removed_node, success = self.doubly_linked_list.remove_tail()
+                    if success == True:
+                        self.hashtable.delete(removed_node.url)
 
-    def get_pages(self):
+    def get_pages(self) -> list[str]:
         '''    
         Return the URLs stored in the cache. 
         The URLs are ordered in the order in which the URLs are mostly recently accessed.
         '''
         pages = []
-        item = self.doubly_linked_list.head
+        item = self.doubly_linked_list.head.next
         while item is not None:
             pages.append(item.url)
-            item = item.prev
+            item = item.next
+        pages.pop()
         return pages
 
 

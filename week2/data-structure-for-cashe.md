@@ -1,4 +1,4 @@
-# browser cache implementation
+# browser LRU cache implementation
 
 ## requirements:
 
@@ -63,3 +63,44 @@ L+=1
 ### to get pages in most recent order:
 
 - loop through linked list from head until reach tail
+
+**after searching:**
+
+## improve code quality through reducing edge case:
+
+- use dummy node to reduce edge case and make cleaner code
+- before dummy node: I need a lof of conditional to handle when moving a tail node
+- same thing apply to list, by adding float('inf') and float('-inf') to the sides
+
+before:
+
+```python
+def move_to_head(self, exist_node: Node) -> tuple[Node, bool]:
+        '''
+        head: check if node is already head
+        if not:
+            point current head's next to exist_node,
+            point exist_node's prev to current head,
+            move self.head to exist_node
+        '''
+        if self.head is not exist_node:
+            if exist_node.prev is not None:
+                # when exist node is not self.tail
+                exist_node.prev.next = exist_node.next
+            else:
+                # when exist node is self.tail(the oldest page), we change the self.tail pointer
+                self.tail = exist_node.next
+            exist_node.next.prev = exist_node.prev
+            self.head.next = exist_node
+            exist_node.prev = self.head
+            self.head = exist_node
+        return (exist_node, True)
+```
+
+## direction of doublt linked list:
+
+- tail <-next- head -prev->None
+
+## memory leak:
+
+- when droping the tail, we should remove a node from both hash table and linked list

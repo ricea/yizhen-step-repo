@@ -35,5 +35,5 @@ implement hashtable data structure and a least-recently-used cache from scratch 
 3. **Edge Cases**: Missing null pointer checks in some methods
 
 > Note:
-> I do search websites or ask AI for specific topics once hit the time limitation I set for myself to avoid perfectionism and > use the whole week on it.
-> those marked which 'after research' or similar words are implemented after look up resources
+> Those marked which 'after research' or similar words are implemented after look up resources
+> I do search websites or ask AI for specific topics once hit the time limitation I set for myself to avoid perfectionism and use the whole week on it.
