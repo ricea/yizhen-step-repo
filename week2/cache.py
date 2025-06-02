@@ -64,6 +64,8 @@ class DoublyLinkedList:
         if not: 
             connect point exist_node's prev and next, 
             move exist_node to next of self.head 
+            change previous first node's prev to exist_node
+            change self.head's next to exist_node
         '''
         if self.count_item < 1:
             return (None, False)
