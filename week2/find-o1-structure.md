@@ -11,7 +11,7 @@ hash table has the limitation of worst case O(n) time, despite amorized O(1)
 - 1: To reduce collision in buckets I naturally think of
   a **nested hash** or a hash table **nested with BST** table to get more space with shorter probe length.
 
-  - but mathematically, we need to infinitly nested structures if there are many elements, which lead to O(log n)
+  - but mathematically, we need to infinitly nested structures if there are many elements, which lead to O(log n) (**trie**)
 
 - 2: Use different hash function to reduce duplication (the case 2 or more elements have same hash value). such as hashing the hash value again
   - have the input x, the hash value f(x), when we find the destiny bucket already has element, we jump to next until find an empty bucket
