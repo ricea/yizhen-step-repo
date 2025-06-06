@@ -51,7 +51,7 @@ We can have multiple hash functions, split hash table to swap data directions as
 - theoritically we can achieve O(1) lookup, insert, update, delete
 - perfect hashing
 
-#### topics to explore further:
+#### topics to learn further:
 
 - cache performances, cache-friendly data structures
 - cell probe model
