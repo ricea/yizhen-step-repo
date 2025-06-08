@@ -1,11 +1,6 @@
 #! /usr/bin/python3
-'''
-assume:
-1, there's no invalid input:
--  multiple operators in a row like +-, /*, 
--  unclosed round bracket, divide 0
-2, there's no spaces or other invalid inputs between numbers and operators
-'''
+import traceback
+import sys
 
 # ------------------initial process to convert string to numbers and operators------------------
 
@@ -96,8 +91,8 @@ def tokenize(line):
         elif line[index] == 'r':
             (token, index) = read_round(index)
         else:
-            print('Invalid character found: ' + line[index])
-            exit(1)
+            raise ValueError(f'Invalid character found: {line[index]}')
+
         tokens.append(token)
 
     return tokens
@@ -181,6 +176,9 @@ def handle_multiply_divide(chunk: dict, idx: int) -> tuple[int, int]:
 
         elif tokens[idx]['type'] in ['NUMBER', 'CHUNK']:
             value = unpack(tokens[idx])
+            if prev_operator == 'DIVIDE' and value == 0:
+                raise ZeroDivisionError(
+                    "Division by zero is not allowed.\n")
             res = res * value if prev_operator == 'MULTIPLY' else res / value
         idx += 1
 
@@ -227,15 +225,29 @@ def evaluate(tokens):
     call chunkify_bracket to convert tokens into chunk, then unpack the chunk to get result
     '''
     chunk, _ = chunkify_bracket(tokens)
-    print(chunk)
     res = unpack(chunk)
     return res
 
 
 def test(line):
+    if line == '':
+        expected_answer = 0
+    else:
+        try:
+            expected_answer = eval(line)
+        except ZeroDivisionError:
+            print(
+                f"INFO! Cannot test '{line}' because eval() causes ZeroDivisionError.")
+            traceback.print_exc()
+            return
+        except SyntaxError:
+            print(
+                f"INFO! Cannot test '{line}' because eval() causes SyntaxError.")
+            traceback.print_exc()
+            return
+
     tokens = tokenize(line)
     actual_answer = evaluate(tokens)
-    expected_answer = eval(line)
     if abs(actual_answer - expected_answer) < 1e-8:
         print("PASS! (%s = %f)" % (line, expected_answer))
     else:
@@ -247,7 +259,7 @@ def test(line):
 def run_test():
     print("==== Test started! ====")
     print("\n--- Test basic operation ---")
-
+    test('')
     test('0')
     test('-1')
     test('1+2')
@@ -322,8 +334,10 @@ while True:
     if not line:
         print("Please enter an expression.")
         continue
-
-    tokens = tokenize(line)
-
-    answer = evaluate(tokens)
-    print("answer = %f\n" % answer)
+    line = line.replace(' ', '')
+    try:
+        tokens = tokenize(line)
+        answer = evaluate(tokens)
+        print("answer = %f\n" % answer)
+    except Exception as e:
+        traceback.print_exc()

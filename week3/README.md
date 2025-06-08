@@ -63,11 +63,19 @@ the idea is like this
 - inside chunkify, i attach them to a child's `fn` property to mark the action to execute later
 - in `unpack` function, after calculating, it's checks if a chunk has these marks in its `fn`, and calls corresponding actions.
 
-##### features haven't been implemented:
+##### add error handling:
 
-handle divide by 0 exception
+- handle divide by 0 error
+- handle invalid syntax error
+- remove white spaces in input
 
 ---
+
+# better ways :
+
+- use a stack
+- handle parentheses with recursive without a entry unpack?
+- ...
 
 #### minor topics:
 
