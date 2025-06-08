@@ -45,7 +45,8 @@ def tokenize(line):
 
 def evaluate(tokens):
     answer = 0
-    tokens.insert(0, {'type': 'PLUS'}) # Insert a dummy '+' token
+
+    tokens.insert(0, {'type': 'PLUS'})  # Insert a dummy '+' token
     index = 1
     while index < len(tokens):
         if tokens[index]['type'] == 'NUMBER':
@@ -67,7 +68,8 @@ def test(line):
     if abs(actual_answer - expected_answer) < 1e-8:
         print("PASS! (%s = %f)" % (line, expected_answer))
     else:
-        print("FAIL! (%s should be %f but was %f)" % (line, expected_answer, actual_answer))
+        print("FAIL! (%s should be %f but was %f)" %
+              (line, expected_answer, actual_answer))
 
 
 # Add more tests to this function :)
@@ -76,6 +78,7 @@ def run_test():
     test("1+2")
     test("1.0+2.1-3")
     print("==== Test finished! ====\n")
+
 
 run_test()
 
