@@ -319,8 +319,10 @@ while True:
     '''
     print('> ', end="")
     line = input().strip()
-    if len(line) < 1:
-        print('Invalid input')
+    if not line:
+        print("Please enter an expression.")
+        continue
+
     tokens = tokenize(line)
 
     answer = evaluate(tokens)

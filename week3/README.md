@@ -47,7 +47,7 @@ the idea is like this
 - inside `evaluate`, it first calls `chunkify_multiply_divide`, then pass the parent chunk to `handle_add_substract`
 - `handle_add_substract` will call `chunkify_multiply_divide` once it encounters a child chunk, and finally returns the result
 
-##### 2. managed to handle parenthesis:
+##### 2. managed to handle parentheses:
 
 - I find the previous `chunkify_multiply_divide` useful. So i first implemented `chunkify_bracket` to organize the plain tokens list. It converts each pair of round brakets into a child, which has original brakets' inner items in it's own `tokens` property. This structure is similar to above
 
@@ -59,7 +59,7 @@ the idea is like this
 
 ##### 3. add advanced operations: abs, int, round
 
-- similar with parenthesis, i first converts these into tokens
+- similar with parentheses, i first converts these into tokens
 - inside chunkify, i attach them to a child's `fn` property to mark the action to execute later
 - in `unpack` function, after calculating, it's checks if a chunk has these marks in its `fn`, and calls corresponding actions.
 
@@ -69,7 +69,7 @@ handle divide by 0 exception
 
 ---
 
-### side topics:
+#### minor topics:
 
 how to debug without an IDE:
 pdb Python debugger
