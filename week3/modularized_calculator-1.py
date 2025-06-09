@@ -261,7 +261,7 @@ def run_test():
     print("\n--- Test basic operation ---")
     test('')
     test('0')
-    test('-1')
+    test('-1') # the two - operators are "1-2" and "-2" "not True"
     test('1+2')
     test('4-9')
     test('2*1.9')
@@ -319,6 +319,8 @@ def run_test():
     test('abs(5-round(10.8))')
     test('(round(2.6)+int(1.1))*abs(-2)')
     test('abs(round(int(5-10.8)))')
+
+    test('-1*(-1)')
 
     print('==== Test finished! ====\n')
 
