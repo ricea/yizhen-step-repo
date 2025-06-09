@@ -69,7 +69,10 @@ the idea is like this
 - handle invalid syntax error
 - remove white spaces in input
 
----
+#### time complexity:
+
+- Tokenization, chunkify, evaluation: O(n)
+- best case, worst case, average: O(n)
 
 # better ways :
 
